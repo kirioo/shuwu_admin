@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tz.dao.message.IMessageMapper" >
+	<insert id="save" parameterType="Message">
+			INSERT INTO m_message(
+				id,
+				avatar,
+				publish_time,
+				nickname,
+				content,
+				state
+			)VALUES(
+				#{id},
+		 		<if test="avatar!=null">#{avatar},</if>
+				#{publishTime},
+				<if test="nickname!=null">#{nickname},</if>
+				#{content},
+				<if test="state!=null">#{state}</if>
+			)
+	</insert>
+	
+</mapper>

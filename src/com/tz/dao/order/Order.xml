@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tz.dao.order.IOrderMapper" >
+	<select id="findOrders" resultType="Order" parameterType="TzParams">
+		SELECT
+			o.id,
+			u.nickname as nickname,
+			g.title as title,
+			a.detail_address as detailAddress,
+			o.distribution_mode as distributionMode,
+			o.supplement,
+			o.place_order_time as placeOrderTime,
+			o.pay_time as payTime,
+			o.receiving_confirmation_time as receivingConfirmationTime,
+			o.application_returns_time as applicationReturnsTime,
+			o.cancel_time as cancelTime,
+			o.refund_time as refundTime,
+			o.per_price as perPrice,
+			o.number,
+			o.total,
+			o.price_element_1 as priceElement1,
+			o.price_element_2 as priceElement2,
+			o.state,
+			o.postage
+		FROM
+			m_order AS o
+		LEFT JOIN m_user AS u ON (o.user_id = u.user_id)
+		LEFT JOIN m_user_address AS a ON (o.user_id = a.user_id)
+		LEFT JOIN m_goods AS g ON (o.good_id = g.id)	
+		<trim prefix="WHERE" prefixOverrides="AND | OR">  
+			<if test="@com.tz.util.TmStringUtils@isNotEmpty(shopId)">
+				and g.shopkeeper_id = #{shopId}
+			</if>
+		</trim>
+		ORDER BY cancel_time desc
+		LIMIT #{pageNo} ,#{pageSize};				
+	</select>
+	
+	<select id="count" resultType="int" parameterType="TzParams">
+		SELECT
+			count(1) 
+		FROM
+			m_order AS o
+		LEFT JOIN m_user AS u ON (o.user_id = u.user_id)
+		LEFT JOIN m_user_address AS a ON (o.user_id = a.user_id)
+		LEFT JOIN m_goods AS g ON (o.good_id = g.id)
+		<trim prefix="WHERE" prefixOverrides="AND | OR">  
+			<if test="@com.tz.util.TmStringUtils@isNotEmpty(keyword)">
+				and g.title LIKE '%${keyword}%'
+			</if>
+			<if test="@com.tz.util.TmStringUtils@isNotEmpty(shopId)">
+				and g.shopkeeper_id = #{shopId}
+			</if>
+		</trim>
+	</select>
+	
+	<update id="update" parameterType="Order">
+		update m_order
+		<set>
+			<if test="state!=null">state=#{state},</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<select id="get" resultType="Order" parameterType="Order">
+		SELECT
+			*
+		FROM
+			m_order AS o
+		WHERE id = #{id}
+	</select>
+</mapper>

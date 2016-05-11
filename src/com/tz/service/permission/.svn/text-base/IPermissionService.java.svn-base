@@ -1,0 +1,132 @@
+/**
+ * tzdesk系统平台
+ * moonvip_admin
+ * com.tz.service.permission
+ * IPermissionService.java
+ * 创建人:柯柯 
+ * 时间：2015年12月14日 22:25:50
+ * 2015潭州教育公司-版权所有
+ */
+package com.tz.service.permission;
+
+import java.util.HashMap;
+
+import com.tz.bean.Permission;
+import com.tz.bean.TzParams;
+
+/**
+ * 
+ * IPermissionService
+ * 创建人:柯柯 
+ * 时间：2015年12月14日 22:25:50
+ * @version 1.0.0
+ * 
+ */
+public interface IPermissionService {
+
+
+	/**
+	 * 
+	 * com.tz.service.permission 
+	 * 方法名：findPermissions
+	 * 创建人：柯柯 
+	 * 手机号码:15074816437
+	 * 时间：2015年12月14日 22:25:50
+	 * @param params
+	 * @return 
+	 * 返回类型：List<Permission>
+	 * @exception 
+	 * @since  1.0.0
+	 */
+
+	//我们要学习json---前后台数据交互的---基础简单的文本---文本和流的输出
+	//java----json--js/ajax---dom页面中 responseText
+	//就是因为js无法调用java中类型和集合，所有说我们要通过一些工具json把java中的对象和数据类型转换成json字符串或者xml字符
+	//JSON.parse();json-js中的对象
+	//fastjson.jackjson.jsonutil.net.sf.jsonArray
+	
+//	 [ ===list<map/bean>
+//		{name : "内容管理",url : "",opid : 1,pid : "root1"}, map/bean
+//		{name : "日记管理",url : "",opid : 2,pid : "root2"}, map/bean
+//		{name : "主题框架3",url : "",opid : 3,pid : "root3"}, map/bean
+//		{name : "主题框架4",url : "",opid : 4,pid : "root4"}, map/bean
+//		{name : "主题框架5",url : "",opid : 5,pid : "root5"}, map/bean
+//		{name : "主题框架6",url : "",opid : 6,pid : "root6"} map/bean
+//	]
+	public HashMap<String,Object> findPermissions(TzParams params);
+	
+	/**
+	 * 求总数
+	 * com.tz.dao.permission 
+	 * 方法名：count
+	 * 创建人：柯柯 
+	 * 手机号码:15074816437
+	 * 时间：2015年12月14日 22:25:50
+	 * @param id
+	 * @return 
+	 * 返回类型：List<Permission>
+	 * @exception 
+	 * @since  1.0.0
+	 */
+	public int count(TzParams params);
+	
+	/**
+	 * 
+	 * com.tz.service.permission 
+	 * 方法名：findPermissions
+	 * 创建人：柯柯 
+	 * 手机号码:15074816437
+	 * 时间：2015年12月14日 22:25:50
+	 * @param params
+	 * @return 
+	 * 返回类型：List<Permission>
+	 * @exception 
+	 * @since  1.0.0
+	 */
+	public Permission get(Integer id);
+	
+	/**
+	 * 保存权限管理
+	 * com.tz.service.permission 
+	 * 方法名：save
+	 * 创建人：柯柯 
+	 * 手机号码:15074816437
+	 * 时间：2015年12月14日 22:25:50 
+	 * @param permission
+	 * @return 
+	 * 返回类型：Permission
+	 * @exception 
+	 * @since  1.0.0
+	 */
+	public int save(Permission permission);
+	
+	/**
+	 * 更新权限管理
+	 * com.tz.service.permission 
+	 * 方法名：update
+	 * 创建人：柯柯 
+	 * 手机号码:15074816437
+	 * 时间：2015年12月14日 22:25:50
+	 * @param permission
+	 * @return 
+	 * 返回类型：int
+	 * @exception 
+	 * @since  1.0.0
+	 */
+	public int update(Permission permission);
+	
+	/**
+	 * 删除权限管理
+	 * com.tz.service.permission 
+	 * 方法名：delete
+	 * 创建人：柯柯 
+	 * 手机号码:15074816437
+	 * 时间：2015年12月14日 22:25:50
+	 * @param params
+	 * @return 
+	 * 返回类型：int
+	 * @exception 
+	 * @since  1.0.0
+	 */
+	public int delete(TzParams params);
+}

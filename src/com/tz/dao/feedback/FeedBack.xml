@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tz.dao.feedback.IFeedBackMapper" >
+	<select id="findFeedBacks" resultType="FeedBack" parameterType="TzParams">
+		SELECT
+			f.id as id,
+			u.userName as userName,
+			f.content as content,
+			f.createTime as createTime,
+			f.isDelete as isDelete,
+			f.status as status
+		FROM
+			s_feedback AS f
+		LEFT JOIN s_user AS u ON f.userId = u.id
+		<trim prefix="WHERE" prefixOverrides="AND | OR">  
+			<if test="@com.tz.util.TmStringUtils@isNotEmpty(keyword)">
+				and u.userName LIKE '%${keyword}%'
+			</if>
+			and isDelete = 0
+		</trim>
+		ORDER BY ${order}
+		LIMIT #{pageNo} ,#{pageSize};				
+	</select>
+	
+	<select id="count" resultType="int" parameterType="TzParams">
+		SELECT
+			count(1) 
+		FROM
+			s_feedback as f
+		LEFT JOIN s_user AS u ON f.userId = u.id
+		<trim prefix="WHERE" prefixOverrides="AND | OR">  
+			<if test="@com.tz.util.TmStringUtils@isNotEmpty(keyword)">
+				and u.userName LIKE '%${keyword}%'
+			</if>
+		</trim>
+	</select>
+	
+	<update id="update" parameterType="FeedBack">
+		update s_feedback  
+		<set>
+			<if test="status!=null">status=#{status},</if>
+			<if test="isDelete!=null">isDelete=#{isDelete},</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="TzParams">
+		update s_feedback   set isDelete = 1 where id = #{id}
+	</delete>
+	
+</mapper>

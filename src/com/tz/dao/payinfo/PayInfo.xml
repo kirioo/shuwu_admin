@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tz.dao.payinfo.IPayInfoMapper" >
+	<insert id="save" parameterType="PayInfo">
+	    INSERT INTO 
+	    	m_payinfo(
+	    		id,
+	    		orderId,
+	    		payType,
+	    		state,
+	    		tradeNo) 
+		VALUES(
+				#{id},
+				#{orderId},
+				#{payType},
+				#{state},
+				#{tradeNo})
+	</insert>
+</mapper>

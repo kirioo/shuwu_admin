@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tz.dao.shopfunds.IShopFundsMapper" >
+	<select id="findShopFundss" resultType="ShopFunds" parameterType="TzParams">
+		select 
+		id,
+		name,
+		create_time as createTime,
+		update_time as updateTime,
+		user_id as userId,
+		is_delete as isDelete,
+		status 
+		FROM
+			keke_shopfunds 
+		<trim prefix="WHERE" prefixOverrides="AND | OR">  
+			<if test="@com.tz.util.TmStringUtils@isNotEmpty(keyword)">
+				and name LIKE '%${keyword}%'
+			</if>
+		</trim>
+		ORDER BY ${order}
+		LIMIT #{pageNo} ,#{pageSize};				
+	</select>
+	
+	<select id="count" resultType="int" parameterType="TzParams">
+		SELECT
+			count(1) 
+		FROM
+			keke_shopfunds 
+		<trim prefix="WHERE" prefixOverrides="AND | OR">  
+			<if test="@com.tz.util.TmStringUtils@isNotEmpty(keyword)">
+				and name LIKE '%${keyword}%'
+			</if>
+		</trim>
+	</select>
+	
+	
+	<select id="groupFunds" resultType="ShopFunds"  parameterType="TzParams">
+		SELECT
+			SUM(income) AS income,
+			SUM(pay_out) AS payOut,
+			(SUM(income)-SUM(pay_out)) as gl
+		FROM
+			m_funds_day
+		WHERE  user_id = #{shopId} 
+	 	 AND DATE_FORMAT(create_time,'%Y-%m-%d')= #{date}
+	</select>
+	
+	<select id="groupWeeks" resultType="java.util.HashMap"  parameterType="TzParams">	
+		SELECT 	
+			SUM(income) as income,
+			SUM(pay_out) as payOut,
+			SUM(gl) as gl,
+			DAYOFWEEK(create_time) as w
+			FROM m_funds_week 
+			where 
+				DATE_SUB(CURDATE(), INTERVAL 7 DAY) &lt;= date(now()) And user_id = #{shopId}
+			GROUP BY w
+			ORDER BY w	
+	</select>
+	
+	<select id="groupMonths" resultType="java.util.HashMap"  parameterType="TzParams">
+			SELECT
+			SUM(income) as income,
+			SUM(pay_out) as payOut,
+			SUM(gl) as gl,
+			MONTH(create_time) as m
+		FROM m_funds_month
+ 		WHERE user_id = #{shopId}
+			AND DATE_FORMAT(create_time,'%Y') = #{year}
+		GROUP BY m
+		ORDER BY m 
+	</select>
+	
+</mapper>

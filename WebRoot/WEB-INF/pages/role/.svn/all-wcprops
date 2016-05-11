@@ -1,0 +1,29 @@
+K 25
+svn:wc:ra_dav:version-url
+V 65
+/svn/kekevip/!svn/ver/28/moonvip_admin/WebRoot/WEB-INF/pages/role
+END
+template.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 78
+/svn/kekevip/!svn/ver/28/moonvip_admin/WebRoot/WEB-INF/pages/role/template.jsp
+END
+user.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/kekevip/!svn/ver/28/moonvip_admin/WebRoot/WEB-INF/pages/role/user.jsp
+END
+list.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 74
+/svn/kekevip/!svn/ver/28/moonvip_admin/WebRoot/WEB-INF/pages/role/list.jsp
+END
+permission.jsp
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/kekevip/!svn/ver/28/moonvip_admin/WebRoot/WEB-INF/pages/role/permission.jsp
+END

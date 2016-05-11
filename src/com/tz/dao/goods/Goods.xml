@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tz.dao.goods.IGoodsMapper" >
+	<select id="findGoodss" resultType="Goods" parameterType="TzParams">
+		select
+			id,
+			cover,
+			start_position as startPosition,
+			end_position as endPosition,
+			shopkeeper_id as shopkeeperId,
+			title,
+			original_price as originalPrice,
+			discounted_price as discountedPrice,
+			express_price as expressPrice,
+			style,
+			unit,
+			state,
+			goods_type as goodsType,
+			isRecommend,
+			max_price as maxPrice ,
+			min_price as minPrice,
+			photography_type as photographyType,
+			create_time as createTime,
+			edit_time as editTime,
+			carousel1,
+			carousel2,
+			carousel3
+		FROM
+			m_goods 
+		<trim prefix="WHERE" prefixOverrides="AND | OR">  
+			<if test="@com.tz.util.TmStringUtils@isNotEmpty(shopId)">
+				and shopkeeper_id = #{shopId}
+			</if>
+			<if test="@com.tz.util.TmStringUtils@isNotEmpty(keyword)">
+				and title LIKE '%${keyword}%'
+			</if>
+			<if test="@com.tz.util.TmStringUtils@isNotEmpty(isDelete)">
+				and  state = #{isDelete}
+			</if>
+		</trim>
+		ORDER BY ${order}
+		LIMIT #{pageNo} ,#{pageSize};				
+	</select>
+	
+	<select id="count" resultType="int" parameterType="TzParams">
+		SELECT
+			count(1) 
+		FROM
+			m_goods 
+		<trim prefix="WHERE" prefixOverrides="AND | OR">  
+			<if test="@com.tz.util.TmStringUtils@isNotEmpty(keyword)">
+				and title LIKE '%${keyword}%'
+			</if>
+			<if test="@com.tz.util.TmStringUtils@isNotEmpty(shopId)">
+				and shopkeeper_id = #{shopId}
+			</if>
+			<if test="@com.tz.util.TmStringUtils@isNotEmpty(isDelete)">
+				and  state = #{isDelete}
+			</if>
+		</trim>
+	</select>
+	
+	<select id="get" resultType="Goods">
+		SELECT
+			id,
+			cover,
+			start_position as startPosition,
+			end_position as endPosition,
+			shopkeeper_id as shopkeeperId,
+			title,
+			original_price as originalPrice,
+			discounted_price as discountedPrice,
+			express_price as expressPrice,
+			style,
+			unit,
+			state,
+			goods_type as goodsType,
+			isRecommend,
+			max_price as maxPrice ,
+			min_price as minPrice,
+			photography_type as photographyType,
+			create_time as createTime,
+			edit_time as editTime,
+			carousel1,
+			carousel2,
+			carousel3
+		FROM
+			m_goods where id = #{id}
+		<trim prefix="WHERE" prefixOverrides="AND | OR">  
+			<if test="@com.tz.util.TmStringUtils@isNotEmpty(keyword)">
+				and title LIKE '%${keyword}%'
+			</if>
+			<if test="@com.tz.util.TmStringUtils@isNotEmpty(shopId)">
+				and shopkeeper_id = #{shopId}
+			</if>
+		</trim>
+	</select>
+	
+	
+	<delete id="delete" parameterType="TzParams">
+<!-- 	delete from m_goods  where id = #{id} -->
+		update m_goods set state = 0 where id = #{id}
+	</delete>
+	
+	<insert id="save" parameterType="Goods">
+			INSERT INTO m_goods(
+				id,
+				cover,
+				start_position,
+				end_position,
+				shopkeeper_id,
+				title,
+				original_price,
+				discounted_price,
+				express_price,
+				style,
+				unit,
+				state,
+				goods_type,
+				isRecommend,
+				max_price,
+				min_price,
+				photography_type,
+				create_time,
+				edit_time,
+				carousel1,
+				carousel2,
+				carousel3
+			)VALUES(
+				#{id},
+				<if test="cover!=null">#{cover},</if>
+				<if test="startPosition!=null">#{startPosition},</if>
+				<if test="endPosition!=null">#{endPosition},</if>
+				<if test="shopkeeperId!=null">#{shopkeeperId},</if>
+				#{title},
+				#{originalPrice},
+				<if test="discountedPrice!=null">#{discountedPrice},</if>
+				<if test="expressPrice!=null">#{expressPrice},</if>
+				<if test="style!=null">#{style},</if>
+				<if test="unit!=null">#{unit},</if>
+				#{state},
+				<if test="goodsType!=null">#{goodsType},</if>
+				<if test="isRecommend!=null">#{isRecommend},</if>
+				<if test="maxPrice!=null">#{maxPrice},</if>
+				<if test="minPrice!=null">#{minPrice},</if>
+				<if test="photographyType!=null">#{photographyType},</if>
+				<if test="createTime!=null">#{createTime},</if>
+				<if test="editTime!=null">#{editTime},</if>
+				<if test="carousel1!=null">#{carousel1},</if>
+				<if test="carousel2!=null">#{carousel2},</if>
+				<if test="carousel3!=null">#{carousel3}</if>
+			)
+	</insert>
+	
+	<update id="update" parameterType="Goods">
+		update m_goods 
+		<set>
+			<if test="state!=null">state=#{state},</if>
+			<if test="isRecommend!=null">isRecommend=#{isRecommend},</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<select id="getGoodsPrice" resultType="GoodsPrice" parameterType="Goods">
+	    SELECT
+	    	p.id, 
+	    	p.goods_id as goodsId, 
+	    	p.element1, 
+	    	p.element2, 
+	    	p.element3, 
+	    	p.price, 
+	    	p.state, 
+	    	p.stock,
+            e1.name as size,
+            e2.name as color
+	    FROM 
+	    	m_goods_price as p,m_price_elements as e1,m_price_elements as e2
+	    WHERE
+			p.goods_id = #{id}
+	    	and
+	    	p.state = 1
+            and
+			p.element1 = e1.id
+            and
+            p.element2 = e2.id;
+	</select>
+	
+	<select id="getSizeList" resultType="PriceElements">
+	    SELECT
+	    	id,
+	    	name,
+	    	pid,
+	    	state
+	    FROM 
+	    	m_price_elements
+	    WHERE
+	    	pid = 1
+	</select>
+	
+	<select id="getColorList" resultType="PriceElements">
+	    SELECT
+	    	id,
+	    	name,
+	    	pid,
+	    	state
+	    FROM 
+	    	m_price_elements
+	    WHERE
+	    	pid = 2
+	</select>
+	<update id="updateGoodPrice" parameterType="GoodsPrice">
+	    UPDATE 
+			m_goods_price
+		SET element1 = #{element1 },
+			element2 = #{element2 },
+		    price = #{price },
+		    stock = #{stock }
+		WHERE id = #{id }
+	</update>
+	
+	<insert id="addGoodPrice" parameterType="GoodsPrice">
+	    INSERT INTO m_goods_price(
+				goods_id, 
+				element1, 
+				element2, 
+				price, 
+				state, 
+				stock
+			)VALUES(
+				#{goodsId },
+				#{element1 },
+				#{element2 },
+				#{price },
+				1,
+				#{stock }
+			)
+	</insert>
+</mapper>
+

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tz.dao.event.IEventMapper" >
+	<select id="findEvents" resultType="Event" parameterType="TzParams">
+		select 
+			id,
+			Img,
+			autor,
+			autorId,
+			content,
+			createTime,
+			isDelete,
+			status,
+			title,
+			updateTime
+		FROM
+			s_hotevents 
+		<trim prefix="WHERE" prefixOverrides="AND | OR">  
+			<if test="@com.tz.util.TmStringUtils@isNotEmpty(keyword)">
+				and title LIKE '%${keyword}%'
+			</if>
+			and isDelete = 0
+		</trim>
+		ORDER BY ${order}
+		LIMIT #{pageNo} ,#{pageSize};				
+	</select>
+	
+	<select id="count" resultType="int" parameterType="TzParams">
+		SELECT
+			count(1) 
+		FROM
+			s_hotevents 
+		<trim prefix="WHERE" prefixOverrides="AND | OR">  
+			<if test="@com.tz.util.TmStringUtils@isNotEmpty(keyword)">
+				and title LIKE '%${keyword}%'
+			</if>
+			and isDelete = 0
+		</trim>
+	</select>
+	
+	<update id="update" parameterType="AdminUser">
+		update s_hotevents  
+		<set>
+			<if test="status!=null">status=#{status},</if>
+			<if test="isDelete!=null">isDelete=#{isDelete},</if>
+		</set>
+		where id = #{id}
+	</update>
+	
+	<delete id="delete" parameterType="TzParams">
+		update s_hotevents  set isDelete = 1 where id = #{id}
+	</delete>
+	
+	<select id="findEventUsers" resultType="Event" parameterType="TzParams">
+		SELECT
+			s.userName as userName,
+			s.phone as phone,
+			s.createTime as createTime,
+			u.age as age,
+			u.sex as male,
+			s.id as id
+		FROM
+			s_signup AS s
+		LEFT JOIN s_user AS u ON s.userId = u.id
+		where s.hotId = #{id}
+		ORDER BY ${order}		
+	</select>
+	
+	<insert id="save" parameterType="Event">
+		INSERT INTO s_hotevents(
+			id,
+			Img,
+			autor,
+			autorId,
+			content,
+			isDelete,
+			status,
+			title
+			)VALUES(
+			#{id},
+			<if test="img!=null">#{img},</if>
+			<if test="autor!=null">#{autor},</if>
+			<if test="autorId!=null">#{autorId},</if>
+			<if test="content!=null">#{content},</if>
+			<if test="isDelete!=null">#{isDelete},</if>
+			<if test="status!=null">#{status},</if>
+			<if test="title!=null">#{title}</if>
+			)
+		</insert>	
+</mapper>

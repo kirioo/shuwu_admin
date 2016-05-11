@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tz.dao.job.IJobMapper" >
+
+	<!-- 一天的收入 -->
+	<select id="findDayInCome" resultType="Funds" parameterType="TzParams">
+		SELECT
+			g.shopkeeper_id as userId,
+			COALESCE(SUM(total),0) AS income
+		FROM
+			m_order AS o
+		LEFT JOIN m_goods AS g ON (o.good_id = g.id)					
+		<trim prefix="WHERE" prefixOverrides="AND | OR">  
+			<if test="@com.tz.util.TmStringUtils@isNotEmpty(date)">
+				DATE_FORMAT(place_order_time,'%Y-%m-%d') = #{date}
+			</if>
+			AND o.state IN (2, 3, 4)			
+		</trim>		
+		GROUP BY
+			g.shopkeeper_id
+	</select>
+	
+	<!-- 一天的支出 -->
+	<select id="findDayPayOut" resultType="Funds" parameterType="TzParams">
+		SELECT
+			g.shopkeeper_id as userId,
+			COALESCE(SUM(total),0) AS payOut
+		FROM
+			m_order AS o
+		LEFT JOIN m_goods AS g ON (o.good_id = g.id)
+		WHERE
+			DATE_FORMAT(place_order_time,'%Y-%m-%d') = #{date}
+		AND o.state IN (6, 8)
+		GROUP BY
+			g.shopkeeper_id			
+	</select>
+	
+	<select id="findWeekInCome" resultType="Funds" parameterType="TzParams">
+		SELECT
+			user_id as userId,
+			SUM(income) AS income,
+			SUM(pay_out) AS payOut,
+			(SUM(income) - SUM(pay_out)) AS gl
+		FROM
+			m_funds_day
+		WHERE
+			DATE_SUB(CURDATE(), INTERVAL 7 DAY) &lt;= date(now())
+		GROUP BY user_id;			
+	</select>
+	
+	<select id="findWeekPayOut" resultType="Funds" parameterType="TzParams">
+		SELECT
+			g.shopkeeper_id as userId,
+			COALESCE(SUM(total),0) AS payOut
+		FROM
+			m_order AS o
+		LEFT JOIN m_goods AS g ON (o.good_id = g.id)					
+		WHERE  
+			DATE_SUB(CURDATE(), INTERVAL 7 DAY) &lt;= date(now())
+			AND o.state IN (6,8)			
+	
+		GROUP BY
+			g.shopkeeper_id				
+	</select>
+	
+	<select id="findMonthInCome" resultType="Funds" parameterType="TzParams">
+		SELECT
+			user_id as userId,
+			SUM(income) AS income,
+			SUM(pay_out) AS payOut,
+			(SUM(income) - SUM(pay_out)) AS gl
+		FROM
+			m_funds_day
+		<trim prefix="WHERE" prefixOverrides="AND | OR">  
+			<if test="@com.tz.util.TmStringUtils@isNotEmpty(YearMonth)">
+				DATE_FORMAT(create_time,'%Y-%m')  = #{YearMonth}
+			</if>			
+		</trim>	
+		GROUP BY user_id;			
+	</select>
+	
+	<select id="findMonthPayOut" resultType="Funds" parameterType="TzParams">
+		SELECT
+			user_id as userId,
+			SUM(total) AS payOut
+		FROM
+			m_order
+		WHERE
+			state IN (5,7)
+			AND DATE_FORMAT(place_order_time,'%Y-%m') = #{YearMonth}
+		GROUP BY
+			user_id				
+	</select>
+	
+	<insert id="saveDayInCome" parameterType="Funds">
+	    INSERT INTO  m_funds_day(
+				user_id,
+				income
+		)VALUES(
+			#{userId},
+			#{income}
+		)
+	</insert>
+	
+	<insert id="saveDayPayOut" parameterType="Funds">
+	    INSERT INTO  m_funds_day(
+				user_id,
+				pay_out
+		)VALUES(
+			#{userId},
+			#{payOut}
+		)
+	</insert>
+	
+	<insert id="saveWeekInCome" parameterType="Funds">
+	    INSERT INTO  m_funds_week(
+				user_id,
+				income,
+				pay_out,
+				gl
+		)VALUES(
+			#{userId},
+			#{income},
+			#{payOut},
+			#{gl}
+		)
+	</insert>
+	
+	<insert id="saveMonthInCome" parameterType="Funds">
+	    INSERT INTO  m_funds_month(
+				user_id,
+				income,
+				pay_out,
+				gl
+		)VALUES(
+			#{userId},
+			#{income},
+			#{payOut},
+			#{gl}
+		)
+	</insert>
+	
+</mapper>
